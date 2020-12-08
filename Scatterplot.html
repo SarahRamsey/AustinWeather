@@ -1,0 +1,621 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Scatterplot</title>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+	
+	<script src="js/skel.min.js"></script>
+    <script src="js/skel-panels.min.js"></script>
+    <script src="js/init.js"></script>
+	
+	<link rel="stylesheet" href="css/dc.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/introjs.css"/>
+	<style>
+        .intro_button {
+            margin-top: 38px;
+            float: left;
+            margin-left: 30px;
+            background-color: #17a3b8;
+            color: white;
+            border-radius: 8px;
+            font-size: 20px;
+        }
+		
+		.text-primary { color: rgba(0,0,0, 0.8); }
+		.text-secondary { color: rgba(0,0,0, 0.65); }
+		.text-muted { color: rgba(0,0,0, 0.45); }
+
+		html,body {
+		  font-family: 'Roboto', sans-serif;
+		  margin: 0; padding: 0 0.5em;
+          background: #fff;
+          
+		}
+
+		h1, h2, h3 {
+		  font-family: 'Ubuntu', sans-serif;  
+		  margin: 0.2em 0 0.5em 0;
+		}
+
+		h1 {
+		  color: #000;
+		}
+		h2 {
+		  color: #222;
+		}
+		h3 {
+		  color: #222;
+		}
+
+		p {
+		  margin: 1.5em 0;
+		}
+
+		.chart-wrapper {
+          border: solid 1px #ccc;
+          box-shadow: 10px 10px 5px grey;
+		}
+
+		.tooltip {
+			position: absolute;
+			background-color: white;
+			color: dimgray;
+			padding: 10px;
+			border: 1px solid;
+			display: none;
+		}
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <!-- Header -->
+    <div id="header">
+        <button class="intro_button" onclick="window.location.href = 'index.html';">Home</button>
+            <button class="intro_button" onclick="window.location.href = 'documentation.html';">Documentation</button>
+		
+        <div class="container">                    
+            <!-- Logo -->
+            <div id="logo">
+                <h1><a href="#">Austin Weather Analytics Dashboard</a></h1>
+
+            </div>
+
+            <!-- Nav -->
+
+        </div>
+
+    </div>
+    <!-- /Header -->
+    
+	
+	<div id="page" style="margin-top:-61px;margin-left: 40px;">
+		<div class="container">
+            <div class="row">
+            </div>
+		</div>
+		
+        <div class="row"  style="padding-left:90px; padding-top: 50px;">
+
+            <div class ="intro" style="margin-right: 400px; margin-top: 30px;">
+				<text style= "font-family: 'Ubuntu', sans-serif;  margin: 0.2em 0 0.5em 0; font-size: 30px;">Correlation Scatterplot<br><br></text>
+				<text style= "font-family: 'Ubuntu', sans-serif;  margin: 0.2em 0 0.5em 0; font-size: 20px;">Below is a visualiztion of the Austin Weather DataSet by weather condition. 
+					Select a specific condition and time range to analyse the corresponding data. To learn more about the data and see more visualizations
+					uses the navigation buttons above.<br></text>
+            </div>
+            <div class="row"  style="padding-left:90px; padding-top: 50px;">
+            </div>
+            <div class="row" style="padding-left: 20px; padding-top: 20px;">
+                <div class="col-lg-2">
+                    <label>X-axis parameter</label>
+                    <select name="paramX" id="paramX" onchange="paramXchange()">
+                        <option selected="selected" value="temperature">Temperature (F)</option>
+                        <option disabled="disabled" value="dewPoint">Dew point (F)</option>
+                        <option value="humidity">Humidity (%)</option>
+                        <option value="seaLevelPressure">Sea level pressure (inches)</option>
+                        <option value="visibility">Visibility (miles)</option>
+                        <option value="windSpeed">Wind speed (MPH)</option>
+                        <option value="windGust">Wind gust (MPH)</option>
+                        <option value="precipitationSum">Precipitation sum (inches)</option>
+                    </select><br /><br />
+                    <label>Y-axis parameter</label>
+                    <select name="paramY" id="paramY" onchange="paramYchange()">
+                        <option disabled="disabled" value="temperature">Temperature (F)</option>
+                        <option selected="selected" value="dewPoint">Dew point (F)</option>
+                        <option value="humidity">Humidity (%)</option>
+                        <option value="seaLevelPressure">Sea level pressure (inches)</option>
+                        <option value="visibility">Visibility (miles)</option>
+                        <option value="windSpeed">Wind speed (MPH)</option>
+                        <option value="windGust">Wind gust (MPH)</option>
+                        <option value="precipitationSum">Precipitation sum (inches)</option>
+                    </select><br /><br />
+                    <label title="Wind speed only has data for high and average; Wind gust and precipitation sum only have one value">Level*</label><br />
+                    <input type="radio" id="low" name="level" value="low" onchange="levelChange('low')">
+                    <label for="low">Low</label>
+                    <input checked="checked" type="radio" id="average" name="level" value="average" onchange="levelChange('average')">
+                    <label for="average">Average</label>
+                    <input type="radio" id="high" name="level" value="high" onchange="levelChange('high')">
+                    <label for="high">High</label><br /><br />
+                    <label>Date from</label><br />
+                    <input type="date" id="dateFrom" name="dateFrom" onchange="dateFromChange()"><br /><br />
+                    <label>Date to</label><br />
+                    <input type="date" id="dateTo" name="dateTo" onchange="dateToChange()"><br /><br />
+                    <button class="btn btn-dark" onclick="reset()">Reset</button>
+                    <br /><br />
+                    <button class="btn btn-info" onclick="update()">Show correlation</button>
+                </div>
+                <div class="col-lg-10">
+                    <div id="my_dataviz"></div>
+                </div>
+            </div>
+	</div>
+</div>
+    
+    <script>
+
+        var minDataDate = null;
+        var maxDataDate = null;
+        
+        var paramX = "temperature";
+        var paramY = "dewPoint";
+        var level = "average";
+        var dateFrom = null;
+        var dateTo = null;
+        var xLabel = "Temperature (F)", yLabel = "Dew point (F)";
+
+        var x = null, y = null, xAxis = null, yAxis = null;
+
+        var allData = null;
+
+        function paramXchange() {
+            paramX = document.getElementById("paramX").value;
+
+            xLabel = $("#paramX option:selected").text();
+
+            $("#paramY option[value='" + paramX + "']")
+                .attr("disabled", "disabled")
+                .siblings().removeAttr("disabled");
+        }
+
+        function paramYchange() {
+            paramY = document.getElementById("paramY").value;
+
+            yLabel = $("#paramY option:selected").text();
+
+            $("#paramX option[value='" + paramY + "']")
+                .attr("disabled", "disabled")
+                .siblings().removeAttr("disabled");
+        }
+
+        function levelChange(value) {
+            level = value;
+        }
+
+        function dateFromChange() {
+            dateFrom = document.getElementById("dateFrom").value;
+            document.getElementById("dateTo").min = dateFrom;
+        }
+
+        function dateToChange() {
+            dateTo = document.getElementById("dateTo").value;
+            document.getElementById("dateFrom").max = dateTo;
+        }
+
+        function reset() {
+            document.getElementById("paramX").value = "temperature";
+            paramX = "temperature";
+
+            document.getElementById("paramY").value = "dewPoint";
+            paramY = "dewPoint";
+
+            $("#paramX option[value='" + paramY + "']")
+                .attr("disabled", "disabled")
+                .siblings().removeAttr("disabled");
+
+            $("#paramY option[value='" + paramX + "']")
+                .attr("disabled", "disabled")
+                .siblings().removeAttr("disabled");
+
+            level = "average";
+            $("#average").prop("checked", true);
+
+            document.getElementById('dateFrom').valueAsDate = new Date(minDataDate);
+            document.getElementById('dateTo').valueAsDate = new Date(maxDataDate);
+            dateFrom = minDataDate;
+            dateTo = maxDataDate;
+
+            update();
+        }
+
+        function update() {
+            var filteredData = allData.filter(x => x.Date >= dateFrom && x.Date <= dateTo);
+
+            var columnX = getCsvColumn(paramX, level);
+            var columnY = getCsvColumn(paramY, level);
+
+            var maxX = Math.max.apply(Math, filteredData.map(function (o) { return isNaN(o[columnX]) ? 0 : o[columnX]; }));
+            var maxY = Math.max.apply(Math, filteredData.map(function (o) { return isNaN(o[columnY]) ? 0 : o[columnY]; }));
+
+            x.domain([0, maxX])
+            xAxis.transition().duration(1000).call(d3.axisBottom(x))
+
+            y.domain([0, maxY])
+            yAxis.transition().duration(1000).call(d3.axisLeft(y))
+
+            d3.select("#xLabel").text(xLabel);
+            d3.select("#yLabel").text(yLabel);
+        
+            var markers = svg.selectAll(".markers").data(filteredData);
+
+            markers.enter()
+                .append('circle')
+                .attr("class", 'markers')
+                .attr("cx", function (d) {
+                    if (d[columnX] == "T" || d[columnX] == "-") {
+                        d[columnX] = 0;
+                    }
+
+                    return x(d[columnX]);
+                })
+                .attr("cy", function (d) {
+                    if (d[columnY] == "T" || d[columnY] == "-") {
+                        d[columnY] = 0;
+                    }
+
+                    return y(d[columnY]);
+                })
+                .attr('r', 5)
+                .style("fill", function (d) {
+
+                    if (d["Events"] == " ") {
+                        return colors.find(x => x.id == "None").color;
+                    }
+
+                    var events = d["Events"].split(" , ");
+
+                    if (events.length == 1) {
+                        return colors.find(x => x.id == events[0]).color;
+                    }
+
+                    if (events.length == 2) {
+                        return colors.find(x => x.id.includes(events[0]) && x.id.includes(events[1])).color;
+                    }
+
+                    if (events.length == 3) {
+                        return colors.find(x => x.id == "Fog-Rain-Thunderstorm").color;
+                    }
+
+                    return "green";
+                });
+
+            // transition *update* set
+            markers.transition().duration(1000)
+                .attr("cx", function (d) {
+                    if (d[columnX] == "T" || d[columnX] == "-") {
+                        d[columnX] = 0;
+                    }
+
+                    return x(d[columnX]);
+                })
+                .attr("cy", function (d) {
+                    if (d[columnY] == "T" || d[columnY] == "-") {
+                        d[columnY] = 0;
+                    }
+
+                    return y(d[columnY]);
+                })
+
+            // remove *exit* set
+            markers.exit().remove();
+        }
+
+        function drawChart() {
+            var columnX = getCsvColumn(paramX, level);
+            var columnY = getCsvColumn(paramY, level);
+
+            var maxX = Math.max.apply(Math, allData.map(function (o) { return isNaN(o[columnX]) ? 0 : o[columnX]; }));
+            var maxY = Math.max.apply(Math, allData.map(function (o) { return isNaN(o[columnY]) ? 0 : o[columnY]; }));
+
+            // Add X axis
+            x = d3.scaleLinear()
+                .domain([0, maxX])
+                .range([0, width]);
+            xAxis = svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+
+            // Add Y axis
+            y = d3.scaleLinear()
+                .domain([0, maxY])
+                .range([height, 0]);
+            yAxis = svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // text label for the x axis
+            svg.append("text")
+                .attr("id", "xLabel")
+                .attr("transform",
+                    "translate(" + (width / 2) + " ," +
+                    (height + margin.top + 30) + ")")
+                .style("text-anchor", "middle")
+                .text(xLabel);
+
+            // text label for the y axis
+            svg.append("text")
+                .attr("id", "yLabel")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text(yLabel);   
+            
+            // Add dots
+            svg.append('g')
+                .selectAll("dot")
+                .data(allData)
+                .enter()
+                .append("circle")
+                .attr("class", 'markers')
+                .attr("cx", function (d) {
+                    if (d[columnX] == "T" || d[columnX] == "-") {
+                        d[columnX] = 0;
+                    }
+
+                    return x(d[columnX]);
+                })
+                .attr("cy", function (d) {
+                    if (d[columnY] == "T" || d[columnY] == "-") {
+                        d[columnY] = 0;
+                    }
+
+                    return y(d[columnY]);
+                })
+                .attr("r", 5)
+                .style("fill", function (d) {
+
+                    if (d["Events"] == " ") {
+                        return colors.find(x => x.id == "None").color;
+                    }
+
+                    var events = d["Events"].split(" , ");
+
+                    if (events.length == 1) {
+                        return colors.find(x => x.id == events[0]).color;
+                    }
+
+                    if (events.length == 2) {
+                        return colors.find(x => x.id.includes(events[0]) && x.id.includes(events[1])).color;
+                    }
+
+                    if (events.length == 3) {
+                        return colors.find(x => x.id == "Fog-Rain-Thunderstorm").color; 
+                    }
+                    
+                    return "green";
+                });
+
+            svg.append("circle")
+                .attr("cx", width + 70)
+                .attr("cy", 30)
+                .attr("r", 5)
+                .attr('fill', colors[0].color);
+
+            svg.append("text")
+                .text("No events")
+                .attr("x", width + 80)
+                .attr("y", 35);
+
+            svg.append("circle")
+                .attr("cx", width + 70)
+                .attr("cy", 50)
+                .attr("r", 5)
+                .attr('fill', colors[1].color);
+
+            svg.append("text")
+                .text("Rain")
+                .attr("x", width + 80)
+                .attr("y", 55);
+
+            svg.append("circle")
+                .attr("cx", width + 70)
+                .attr("cy", 70)
+                .attr("r", 5)
+                .attr('fill', colors[2].color);
+
+            svg.append("text")
+                .text("Thunderstorm")
+                .attr("x", width + 80)
+                .attr("y", 75);
+
+            svg.append("circle")
+                .attr("cx", width + 70)
+                .attr("cy", 90)
+                .attr("r", 5)
+                .attr('fill', colors[3].color);
+
+            svg.append("text")
+                .text("Fog")
+                .attr("x", width + 80)
+                .attr("y", 95);
+
+            svg.append("circle")
+                .attr("cx", width + 70)
+                .attr("cy", 110)
+                .attr("r", 5)
+                .attr('fill', colors[4].color);
+
+            svg.append("text")
+                .text("Snow")
+                .attr("x", width + 80)
+                .attr("y", 115);
+        }
+
+        function getCsvColumn(param, level) {
+            var column = "";
+
+            if (param == "temperature" && level == "high") {
+                column = "TempHighF"
+            }
+            if (param == "temperature" && level == "average") {
+                column = "TempAvgF"
+            }
+            if (param == "temperature" && level == "low") {
+                column = "TemLowF"
+            }
+            if (param == "dewPoint" && level == "high") {
+                column = "DewPointHighF"
+            }
+            if (param == "dewPoint" && level == "average") {
+                column = "DewPointAvgF"
+            }
+            if (param == "dewPoint" && level == "low") {
+                column = "DewPointLowF"
+            }
+            if (param == "humidity" && level == "high") {
+                column = "HumidityHighPercent"
+            }
+            if (param == "humidity" && level == "average") {
+                column = "HumidityAvgPercent"
+            }
+            if (param == "humidity" && level == "low") {
+                column = "HumidityLowPercent"
+            }
+            if (param == "seaLevelPressure" && level == "high") {
+                column = "SeaLevelPressureHighInches"
+            }
+            if (param == "seaLevelPressure" && level == "average") {
+                column = "SeaLevelPressureAvgInches"
+            }
+            if (param == "seaLevelPressure" && level == "low") {
+                column = "SeaLevelPressureLowInches"
+            }
+            if (param == "visibility" && level == "high") {
+                column = "VisibilityHighMiles"
+            }
+            if (param == "visibility" && level == "average") {
+                column = "VisibilityAvgMiles"
+            }
+            if (param == "visibility" && level == "low") {
+                column = "VisibilityLowMiles"
+            }
+            if (param == "windSpeed" && level == "high") {
+                column = "WindHighMPH"
+            }
+            if (param == "windSpeed" && level == "average") {
+                column = "WindAvgMPH"
+            }
+            if (param == "windGust") {
+                column = "WindGustMPH"
+            }
+            if (param == "precipitationSum") {
+                column = "PrecipitationSumInches"
+            }
+
+            return column;
+        }
+
+        // set the dimensions and margins of the graph
+        var margin = { top: 10, right: 230, bottom: 50, left: 50 },
+            width = 500 - margin.left - 50,
+            height = 500 - margin.top - margin.bottom;
+
+        // append the svg object to the body of the page
+        var svg = d3.select("#my_dataviz")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+        
+        var colors = [
+            {
+                id: "None",
+                color: "#dadfec"
+            },
+            {
+                id: "Rain",
+                color: "#53789e"
+            },
+            {
+                id: "Thunderstorm",
+                color: "#fad29a"
+            },
+            {
+                id: "Fog",
+                color: "#64646c"
+            },
+            {
+                id: "Snow",
+                color: "#17a3b8"
+            },
+            {
+                id: "Rain-Thunderstorm",
+                color: "url(#gradRainThunder)"
+            },
+            {
+                id: "Rain-Snow",
+                color: "url(#gradRainSnow)"
+            },
+            {
+                id: "Rain-Snow",
+                color: "url(#gradRainFog)"
+            },
+            {
+                id: "Fog-Rain-Thunderstorm",
+                color: "url(#gradFogRainThunder)"
+            }
+        ];
+
+        var gradRainThunder = svg.append("defs").append("linearGradient").attr("id", "gradRainThunder")
+            .attr("x1", "0%").attr("x2", "0%").attr("y1", "100%").attr("y2", "0%");
+        gradRainThunder.append("stop").attr("offset", "50%").style("stop-color", colors.find(x => x.id == "Rain").color);
+        gradRainThunder.append("stop").attr("offset", "50%").style("stop-color", colors.find(x => x.id == "Thunderstorm").color);
+
+        var gradRainSnow = svg.append("defs").append("linearGradient").attr("id", "gradRainSnow")
+            .attr("x1", "0%").attr("x2", "0%").attr("y1", "100%").attr("y2", "0%");
+        gradRainSnow.append("stop").attr("offset", "50%").style("stop-color", colors.find(x => x.id == "Rain").color);
+        gradRainSnow.append("stop").attr("offset", "50%").style("stop-color", colors.find(x => x.id == "Snow").color);
+
+        var gradRainFog = svg.append("defs").append("linearGradient").attr("id", "gradRainFog")
+            .attr("x1", "0%").attr("x2", "0%").attr("y1", "100%").attr("y2", "0%");
+        gradRainFog.append("stop").attr("offset", "50%").style("stop-color", colors.find(x => x.id == "Rain").color);
+        gradRainFog.append("stop").attr("offset", "50%").style("stop-color", colors.find(x => x.id == "Fog").color);
+
+        var gradFogRainThunder = svg.append("defs").append("linearGradient").attr("id", "gradFogRainThunder")
+            .attr("x1", "0%").attr("x2", "0%").attr("y1", "100%").attr("y2", "0%");
+        gradFogRainThunder.append("stop").attr("offset", "0%").style("stop-color", colors.find(x => x.id == "Rain").color);
+        gradFogRainThunder.append("stop").attr("offset", "100%").style("stop-color", colors.find(x => x.id == "Thunderstorm").color);
+
+        //Read the data
+        d3.csv("austin_weather.csv", function (data) {
+
+            allData = data;
+
+            dateFrom = data[0].Date;
+            dateTo = data[data.length - 1].Date;
+
+            minDataDate = dateFrom;
+            maxDataDate = dateTo;
+
+            document.getElementById("dateFrom").max = dateTo;
+            document.getElementById("dateTo").min = dateFrom;
+
+            document.getElementById('dateFrom').valueAsDate = new Date(minDataDate);
+            document.getElementById('dateTo').valueAsDate = new Date(maxDataDate);
+
+            drawChart();
+        });
+
+    </script>
+</body>
+</html>
