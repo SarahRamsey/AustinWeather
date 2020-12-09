@@ -537,7 +537,7 @@ function drawStackedChart(error, data){
                             .attr('transform', 'translate(' + settings.margins.left + ',' + (settings.dim.height + settings.margins.top) + ')')
                             .call(xAxis)
                             .selectAll("text")
-                            .attr("transform", "rotate(45) translate(0, 20)");
+                            .attr("transform", "rotate(45) translate(40, 0)");
 							
 						 svg.append("text")
                              .attr("transform",
